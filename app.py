@@ -1,4 +1,4 @@
-import streamlit as st
+simport streamlit as st
 import requests
 
 st.set_page_config(
@@ -149,27 +149,41 @@ elif page == "Live Matches":
 # ALL MATCHES
 elif page == "All Matches":
 
-    st.subheader("🏏 Matches")
+    st.subheader("🏏 All Matches")
+
+    search_text = st.text_input(
+        "🔍 Search matches or teams",
+        placeholder="Type a team name, league or venue..."
+    )
 
     if selected_league == "All Leagues":
         filtered_matches = matches
-
     else:
+        league_keyword = selected_league.split("(")[0].strip().lower()
+
         filtered_matches = [
             m for m in matches
-            if selected_league.lower().split("(")[0].strip()
-            in str(m.get("name", "")).lower()
-            or selected_league.lower().split("(")[0].strip()
-            in str(m.get("matchType", "")).lower()
+            if league_keyword in str(m.get("name", "")).lower()
+            or league_keyword in str(m.get("teams", "")).lower()
         ]
 
+    if search_text:
+        filtered_matches = [
+            m for m in filtered_matches
+            if search_text.lower() in str(m.get("name", "")).lower()
+            or search_text.lower() in str(m.get("teams", "")).lower()
+            or search_text.lower() in str(m.get("venue", "")).lower()
+            or search_text.lower() in str(m.get("status", "")).lower()
+        ]
+
+    st.write(f"Matches found: {len(filtered_matches)}")
+
     if not filtered_matches:
-        st.info("No matches found for this selection.")
+        st.info("No matches found.")
 
     else:
         for match in filtered_matches:
             show_match(match)
-
 
 st.divider()
 
