@@ -101,6 +101,11 @@ def fetch_scorecard(match_id):
     return result.get("data", {})
 
 
+def is_upcoming(match):
+    return (
+        match.get("matchStarted") == False
+        and match.get("matchEnded") == False
+    )
 def is_live(match):
     return (
         match.get("matchStarted") is True
