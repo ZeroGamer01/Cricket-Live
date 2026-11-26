@@ -178,6 +178,19 @@ elif page == "Live Matches":
 
 
 # ALL MATCHES
+elif page == "Upcoming Matches":
+    upcoming_matches = [
+        match for match in matches
+        if is_upcoming(match)
+    ]
+
+    st.subheader("📅 Upcoming Cricket Matches")
+
+    if upcoming_matches:
+        for match in upcoming_matches:
+            show_match(match)
+    else:
+        st.info("No upcoming matches available right now.")
 elif page == "All Matches":
 
     st.subheader("🏏 All Matches")
