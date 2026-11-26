@@ -160,7 +160,8 @@ def show_match(match):
 
 # Home
 
-elif page == "Free Live TV":
+# Free Live TV
+if page == "Free Live TV":
     st.title("📺 Free Live Cricket TV")
     st.write("Watch cricket through officially available free streams.")
 
