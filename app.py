@@ -44,7 +44,7 @@ st.divider()
 # Navigation
 page = st.sidebar.radio(
     "Navigation",
-    ["Home", "Live Matches", "All Matches"]
+    ["Home", "Live Matches", "Upcoming Matches", "All Matches"]
 )
 
 # League filters
