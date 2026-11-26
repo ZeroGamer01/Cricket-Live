@@ -158,8 +158,31 @@ def show_match(match):
         )
 
 
-# HOME
-if page == "Home":
+# Home
+if page == "Free Live TV":
+    st.title("📺 Free Live Cricket TV")
+    st.write("Watch cricket through officially available free streams.")
+
+    st.info(
+        "Free live streams depend on broadcasting rights "
+        "and may not be available for every match."
+    )
+
+    st.subheader("Available official streaming platforms")
+
+    st.markdown(
+        "[🌍 ICC.tv — Official ICC streaming](https://www.icc.tv/)"
+    )
+
+    st.markdown(
+        "[▶ ICC YouTube — Official cricket videos](https://www.youtube.com/@ICC)"
+    )
+
+    st.markdown(
+        "[🏏 BCCI — Official website](https://www.bcci.tv/)"
+    )
+
+elif page == "Home":
 
     st.subheader("🏠 Home")
 
