@@ -103,8 +103,8 @@ def fetch_scorecard(match_id):
 
 def is_upcoming(match):
     return (
-        match.get("matchStarted") is False
-        and match.get("matchEnded") is False
+        match.get("matchStarted") is not True
+        and match.get("matchEnded") is not True
     )
 
 
