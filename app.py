@@ -168,6 +168,15 @@ if page == "Free Live TV":
         "and may not be available for every match."
     )
 
+        st.subheader("🔴 Find Free Live Matches")
+
+    st.markdown(
+        "[▶ Browse Free Official Cricket Streams](https://cricketonair.com/free-live-cricket/)"
+    )
+
+    st.caption(
+        "Check whether each stream is available in India before watching."
+    )
     st.subheader("Available official streaming platforms")
 
     st.markdown(
