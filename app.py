@@ -90,28 +90,25 @@ def show_match(match):
     teams = match.get("teams", [])
     scores = match.get("score", [])
 
-    st.markdown("---")
+    match_title = " 🏏 vs ".join(teams) if teams else "Cricket Match"
 
-    if teams:
-        st.subheader(" 🏏  vs  ".join(teams))
-    else:
-        st.subheader("Cricket Match")
+    with st.expander(match_title, expanded=False):
 
-    if scores:
-        for score in scores:
-            st.write(
-                f"**{score.get('inning', '')}**  "
-                f"{score.get('r', '')}/{score.get('w', '')} "
-                f"({score.get('o', '')} overs)"
-            )
+        if scores:
+            for score in scores:
+                st.write(
+                    f"**{score.get('inning', '')}** "
+                    f"{score.get('r', '')}/{score.get('w', '')} "
+                    f"({score.get('o', '')} overs)"
+                )
 
-    st.write("📍", match.get("venue", "Venue unavailable"))
-    st.write("📅", match.get("date", "Date unavailable"))
-    st.write("📢", match.get("status", "Status unavailable"))
+        st.write("📍", match.get("venue", "Venue unavailable"))
+        st.write("📅", match.get("date", "Date unavailable"))
+        st.write("📢", match.get("status", "Status unavailable"))
 
-    st.markdown(
-        "[Find official streaming options](https://www.google.com/search?q=official+live+cricket+streaming)"
-    )
+        st.markdown(
+            "[Find official streaming options](https://www.google.com/search?q=official+live+cricket+streaming)"
+        )
 
 
 # HOME
