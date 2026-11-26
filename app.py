@@ -179,6 +179,17 @@ if page == "Free Live TV":
     st.caption(
         "Check whether each stream is available in India before watching."
     )
+    st.divider()
+
+    st.subheader("🏏 Cricket Live Player")
+
+    stream_url = st.text_input(
+        "Enter an official video stream URL",
+        placeholder="Paste an authorised YouTube video URL here"
+    )
+
+    if stream_url:
+        st.video(stream_url)
 
     st.subheader("Available official streaming platforms")
 
