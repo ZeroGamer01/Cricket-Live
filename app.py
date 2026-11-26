@@ -159,7 +159,8 @@ def show_match(match):
 
 
 # Home
-if page == "Free Live TV":
+
+elif page == "Free Live TV":
     st.title("📺 Free Live Cricket TV")
     st.write("Watch cricket through officially available free streams.")
 
@@ -168,7 +169,7 @@ if page == "Free Live TV":
         "and may not be available for every match."
     )
 
-        st.subheader("🔴 Find Free Live Matches")
+    st.subheader("🔴 Find Free Live Matches")
 
     st.markdown(
         "[▶ Browse Free Official Cricket Streams](https://cricketonair.com/free-live-cricket/)"
@@ -177,6 +178,7 @@ if page == "Free Live TV":
     st.caption(
         "Check whether each stream is available in India before watching."
     )
+
     st.subheader("Available official streaming platforms")
 
     st.markdown(
