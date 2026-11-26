@@ -107,7 +107,6 @@ def is_live(match):
         and match.get("matchEnded") is not True
     )
 
-
 def show_match(match):
     teams = match.get("teams", [])
     scores = match.get("score", [])
@@ -127,6 +126,19 @@ def show_match(match):
         st.write("📍", match.get("venue", "Venue unavailable"))
         st.write("📅", match.get("date", "Date unavailable"))
         st.write("📢", match.get("status", "Status unavailable"))
+
+        match_id = match.get("id")
+
+        if match_id:
+            if st.button("📊 Fetch Detailed Scorecard", key=f"score_{match_id}"):
+                try:
+                    scorecard = fetch_scorecard(match_id)
+                    st.subheader("📊 Detailed Scorecard")
+                    st.json(scorecard)
+
+                except Exception as e:
+                    st.error("Scorecard could not be loaded.")
+                    st.caption(str(e))
 
         st.markdown(
             "[Find official streaming options](https://www.google.com/search?q=official+live+cricket+streaming)"
