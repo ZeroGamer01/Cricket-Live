@@ -1,4 +1,5 @@
 import streamlit as st
+import requests
 
 st.set_page_config(
     page_title="Cricket Live",
@@ -6,24 +7,47 @@ st.set_page_config(
     layout="wide"
 )
 
-# --------------------------
-# APP HEADER
-# --------------------------
+# API connection
+@st.cache_data(ttl=60)
+def fetch_matches():
+    api_key = st.secrets["CRICKET_API_KEY"]
 
+    url = "https://api.cricapi.com/v1/currentMatches"
+
+    params = {
+        "apikey": api_key,
+        "offset": 0
+    }
+
+    response = requests.get(url, params=params, timeout=20)
+    response.raise_for_status()
+
+    result = response.json()
+
+    if result.get("status") != "success":
+        raise Exception(result.get("message", "API request failed"))
+
+    return result.get("data", [])
+
+
+# Header
 st.title("🏏 CRICKET LIVE")
 st.caption("Your cricket streaming and match centre")
 
 st.markdown("""
-Watch cricket, explore leagues, follow matches
-and find officially available streaming sources.
+Follow cricket matches, check live scores and explore
+official streaming options.
 """)
 
 st.divider()
 
-# --------------------------
-# LEAGUES
-# --------------------------
+# Navigation
+page = st.sidebar.radio(
+    "Navigation",
+    ["Home", "Live Matches", "All Matches"]
+)
 
+# League filters
 leagues = [
     "All Leagues",
     "Women's Big Bash League (WBBL)",
@@ -32,112 +56,123 @@ leagues = [
     "Pakistan Super League (PSL)",
     "Caribbean Premier League (CPL)",
     "The Hundred",
-    "International Cricket",
+    "International Cricket"
 ]
 
-selected_league = st.selectbox(
-    "🏆 Choose a league",
+selected_league = st.sidebar.selectbox(
+    "Choose a league",
     leagues
 )
 
-# --------------------------
-# DEMO MATCHES
-# --------------------------
+# Refresh button
+if st.sidebar.button("🔄 Refresh Matches"):
+    st.cache_data.clear()
 
-matches = [
-    {
-        "league": "Women's Big Bash League (WBBL)",
-        "team1": "Hobart Hurricanes Women",
-        "team2": "Adelaide Strikers Women",
-        "status": "Demo match",
-        "source": ""
-    },
-    {
-        "league": "Big Bash League (BBL)",
-        "team1": "Sydney Sixers",
-        "team2": "Melbourne Stars",
-        "status": "Demo match",
-        "source": ""
-    },
-    {
-        "league": "Indian Premier League (IPL)",
-        "team1": "Mumbai Indians",
-        "team2": "Chennai Super Kings",
-        "status": "Demo match",
-        "source": ""
-    },
-]
+# Load matches
+try:
+    matches = fetch_matches()
 
-if selected_league == "All Leagues":
-    filtered_matches = matches
-else:
-    filtered_matches = [
-        m for m in matches
-        if m["league"] == selected_league
-    ]
+except Exception as e:
+    st.error("Unable to load match data.")
+    st.caption(str(e))
+    st.stop()
 
-# --------------------------
-# MATCH CENTRE
-# --------------------------
 
-st.header("📺 Match Centre")
+# Match filtering
+def is_live(match):
+    return (
+        match.get("matchStarted") is True
+        and match.get("matchEnded") is not True
+    )
 
-if filtered_matches:
 
-    for match in filtered_matches:
+def show_match(match):
+    teams = match.get("teams", [])
+    scores = match.get("score", [])
 
-        with st.container(border=True):
+    st.markdown("---")
 
-            st.subheader(
-                f"{match['team1']} vs {match['team2']}"
-            )
+    if teams:
+        st.subheader(" 🏏  vs  ".join(teams))
+    else:
+        st.subheader("Cricket Match")
 
-            st.caption(match["league"])
-
-            st.info(match["status"])
-
+    if scores:
+        for score in scores:
             st.write(
-                "Streaming availability depends on "
-                "the match and your region."
+                f"**{score.get('inning', '')}**  "
+                f"{score.get('r', '')}/{score.get('w', '')} "
+                f"({score.get('o', '')} overs)"
             )
 
-            st.link_button(
-                "🌐 Find Official Streaming",
-                "https://www.icc-cricket.com/"
-            )
+    st.write("📍", match.get("venue", "Venue unavailable"))
+    st.write("📅", match.get("date", "Date unavailable"))
+    st.write("📢", match.get("status", "Status unavailable"))
 
-else:
-    st.info("No matches found for this league.")
+    st.markdown(
+        "[Find official streaming options](https://www.google.com/search?q=official+live+cricket+streaming)"
+    )
 
-# --------------------------
-# WATCH SECTION
-# --------------------------
 
-st.divider()
+# HOME
+if page == "Home":
 
-st.header("🎥 Watch Cricket")
+    st.subheader("🏠 Home")
 
-st.markdown("""
-Find authorised free streaming options through
-official broadcasters and cricket organisations.
-""")
+    st.write("Welcome to Cricket Live.")
 
-st.link_button(
-    "🌐 ICC Official Website",
-    "https://www.icc-cricket.com/"
-)
+    st.write(f"Matches available in the feed: **{len(matches)}**")
 
-st.link_button(
-    "▶ Official ICC YouTube",
-    "https://www.youtube.com/@ICC"
-)
+    live_matches = [m for m in matches if is_live(m)]
 
-# --------------------------
-# FOOTER
-# --------------------------
+    st.metric("Live Matches", len(live_matches))
+
+    for match in live_matches:
+        show_match(match)
+
+
+# LIVE MATCHES
+elif page == "Live Matches":
+
+    st.subheader("🔴 Live Matches")
+
+    live_matches = [m for m in matches if is_live(m)]
+
+    if not live_matches:
+        st.info("No live matches found right now.")
+
+    else:
+        for match in live_matches:
+            show_match(match)
+
+
+# ALL MATCHES
+elif page == "All Matches":
+
+    st.subheader("🏏 Matches")
+
+    if selected_league == "All Leagues":
+        filtered_matches = matches
+
+    else:
+        filtered_matches = [
+            m for m in matches
+            if selected_league.lower().split("(")[0].strip()
+            in str(m.get("name", "")).lower()
+            or selected_league.lower().split("(")[0].strip()
+            in str(m.get("matchType", "")).lower()
+        ]
+
+    if not filtered_matches:
+        st.info("No matches found for this selection.")
+
+    else:
+        for match in filtered_matches:
+            show_match(match)
+
 
 st.divider()
 
 st.caption(
-    "Cricket Live | Find cricket matches and authorised streams"
+    "Cricket Live | Match data provided through CricketData API"
 )
