@@ -79,6 +79,28 @@ except Exception as e:
 
 
 # Match filtering
+@st.cache_data(ttl=60)
+def fetch_scorecard(match_id):
+    api_key = st.secrets["CRICKET_API_KEY"]
+
+    url = "https://api.cricapi.com/v1/match_scorecard"
+
+    params = {
+        "apikey": api_key,
+        "id": match_id
+    }
+
+    response = requests.get(url, params=params, timeout=20)
+    response.raise_for_status()
+
+    result = response.json()
+
+    if result.get("status") != "success":
+        raise Exception(result.get("message", "Scorecard request failed"))
+
+    return result.get("data", {})
+
+
 def is_live(match):
     return (
         match.get("matchStarted") is True
