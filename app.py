@@ -12,7 +12,7 @@ st.set_page_config(
 def fetch_matches():
     api_key = st.secrets["CRICKET_API_KEY"]
 
-    url = "https://api.cricapi.com/v1/currentMatches"
+    url = "https://api.cricapi.com/v1/matches"
 
     params = {
         "apikey": api_key,
