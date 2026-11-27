@@ -189,6 +189,9 @@ if page == "Free Live TV":
     )
 
     if stream_url:
+    if "youtube.com" in stream_url or "youtu.be" in stream_url:
+        st.video(stream_url)
+    else:
         st.video(stream_url)
 
     st.subheader("Available official streaming platforms")
