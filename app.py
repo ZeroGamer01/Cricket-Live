@@ -188,15 +188,15 @@ if page == "Free Live TV":
         placeholder="Paste an authorised YouTube video URL here"
     )
 
-            if stream_url:
-        if "youtube.com/watch?v=" in stream_url:
-            video_id = stream_url.split("watch?v=")[1].split("&")[0]
-            st.video(f"https://www.youtube.com/watch?v={video_id}")
-        elif "youtu.be/" in stream_url:
-            video_id = stream_url.split("youtu.be/")[1].split("?")[0]
-            st.video(f"https://www.youtube.com/watch?v={video_id}")
-        else:
-            st.video(stream_url)
+ if stream_url:
+    if "youtube.com/watch?v=" in stream_url:
+        video_id = stream_url.split("watch?v=")[1].split("&")[0]
+     st.video(f"https://www.youtube.com/watch?v={video_id}")
+    elif "youtu.be/" in stream_url:
+        video_id = stream_url.split("youtu.be/")[1].split("?")[0]
+       st.video(f"https://www.youtube.com/watch?v={video_id}")
+    else:
+        st.video(stream_url)
 
     st.subheader("Available official streaming platforms")
 
